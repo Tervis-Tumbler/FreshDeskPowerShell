@@ -46,15 +46,22 @@ function Get-FreshDeskDomain {
 
 function Get-FreshDeskURL {
     param (
-        $Resource
+        $Resource,
+        $Include,
+        $Page,
+        $Per_Page
     )
     $Domain = Get-FreshDeskDomain
-    "https://$Domain.freshdesk.com/api/v2/$Resource"
+    $PSBoundParameters.Remove("Resource") | Out-Null
+    $QueryStringParameters = $PSBoundParameters | ConvertTo-URLEncodedQueryStringParameterString
+
+    "https://$Domain.freshdesk.com/api/v2/$Resource$(if($QueryStringParameters){"?$QueryStringParameters"})"
 }
 function Invoke-FreshDeskAPI {
     param (
         [ValidateSet("tickets")]$Resource,
-        $Method
+        $Method,
+        $Include
     )
     $URL = Get-FreshDeskURL @PSBoundParameters
     
