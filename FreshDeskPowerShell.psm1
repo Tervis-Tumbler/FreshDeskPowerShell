@@ -119,16 +119,16 @@ function New-FreshDeskContact {
         [boolean]$active,
         [string]$address,
         [object]$avatar,
-        [number]$company_id,
+        [String]$company_id,
         [boolean]$view_all_tickets,
-        [dictionary]$custom_fields,
+        [Hashtable]$custom_fields,
         [boolean]$deleted,
         [string]$description,
         [string]$email,
-        [number]$id,
+        [String]$id,
         [string]$job_title,
         [string]$language,
-        [number]$mobile,
+        [String]$mobile,
         [string]$name,
         [String[]]$other_emails,
         [string]$phone,
@@ -139,5 +139,5 @@ function New-FreshDeskContact {
         [datetime]$created_at,
         [datetime]$updated_at
     )
-    Invoke-FreshDeskAPI -Body $PSBoundParameters -Resource tickets -Method Post
+    Invoke-FreshDeskAPI -Body $PSBoundParameters -Resource contacts -Method Post
 }
