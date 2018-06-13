@@ -59,19 +59,85 @@ function Get-FreshDeskURL {
 }
 function Invoke-FreshDeskAPI {
     param (
-        [ValidateSet("tickets")]$Resource,
+        [ValidateSet("tickets","contacts")]$Resource,
         $Method,
-        $Include
+        $Include,
+        $Body
     )
     $URL = Get-FreshDeskURL @PSBoundParameters
     
     $Credential = Get-FreshDeskCredential
+    $BodyParameter = @{
+        Body = if ($Body) {$Body | ConvertFrom-PSBoundParameters | ConvertTo-Json}
+    }
 
     Invoke-RestMethod -ContentType "application/json" -Uri $URL -Method $Method -UseBasicParsing -Headers @{ 
         Authorization = $Credential | ConvertTo-HttpBasicAuthorizationHeaderValue -Type Basic
-    }
+    } @BodyParameter
 }
 
 function Get-FreshDeskTicket {
     Invoke-FreshDeskAPI -Resource tickets -Method Get
+}
+
+function New-FreshDeskTicket {
+    param (
+        $name,
+        $requester_id,
+        $email,
+        $facebook_id,
+        $phone,
+        $twitter_id,
+        $unique_external_id,
+        $subject,
+        $type,
+        $status,
+        $priority,
+        $description,
+        $responder_id,
+        $attachments,
+        $cc_emails,
+        $custom_fields,
+        $due_by,
+        $email_config_id,
+        $fr_due_by,
+        $group_id,
+        $product_id,
+        $source,
+        $tags,
+        $company_id
+    )    
+    Invoke-FreshDeskAPI -Body $PSBoundParameters -Resource tickets -Method Post
+}
+
+function Get-FreshDeskContact {
+
+}
+
+function New-FreshDeskContact {
+    param (
+        [boolean]$active,
+        [string]$address,
+        [object]$avatar,
+        [number]$company_id,
+        [boolean]$view_all_tickets,
+        [dictionary]$custom_fields,
+        [boolean]$deleted,
+        [string]$description,
+        [string]$email,
+        [number]$id,
+        [string]$job_title,
+        [string]$language,
+        [number]$mobile,
+        [string]$name,
+        [String[]]$other_emails,
+        [string]$phone,
+        [String[]]$tags,
+        [string]$time_zone,
+        [string]$twitter_id,
+        [array]$other_companies,
+        [datetime]$created_at,
+        [datetime]$updated_at
+    )
+    Invoke-FreshDeskAPI -Body $PSBoundParameters -Resource tickets -Method Post
 }
