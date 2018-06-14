@@ -119,6 +119,15 @@ function New-FreshDeskTicket {
     Invoke-FreshDeskAPI -Body $PSBoundParameters -Resource tickets -Method Post
 }
 
+function Remove-FreshDeskTicket {
+    param (
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName)]$ID
+    )
+    process {
+        Invoke-FreshDeskAPI -Resource tickets -Method Delete -ResourceID $ID
+    }
+}
+
 function Get-FreshDeskContact {
 
 }
