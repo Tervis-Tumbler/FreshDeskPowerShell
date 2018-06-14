@@ -47,19 +47,23 @@ function Get-FreshDeskDomain {
 function Get-FreshDeskURL {
     param (
         $Resource,
+        $ResourceID,
         $Include,
         $Page,
         $Per_Page
     )
     $Domain = Get-FreshDeskDomain
     $PSBoundParameters.Remove("Resource") | Out-Null
+    $PSBoundParameters.Remove("ResourceID") | Out-Null
     $QueryStringParameters = $PSBoundParameters | ConvertTo-URLEncodedQueryStringParameterString
 
-    "https://$Domain.freshdesk.com/api/v2/$Resource$(if($QueryStringParameters){"?$QueryStringParameters"})"
+    "https://$Domain.freshdesk.com/api/v2/$Resource$(if($ResourceID){"/$ResourceID"})$(if($QueryStringParameters){"?$QueryStringParameters"})"
 }
+
 function Invoke-FreshDeskAPI {
     param (
-        [ValidateSet("tickets","contacts")]$Resource,
+        [ValidateSet("tickets","contacts","ticket_fields")]$Resource,
+        $ResourceID,
         $Method,
         $Include,
         $Body
@@ -77,7 +81,11 @@ function Invoke-FreshDeskAPI {
 }
 
 function Get-FreshDeskTicket {
-    Invoke-FreshDeskAPI -Resource tickets -Method Get
+    param (
+        $ID
+    )
+    $Parameters = @{ResourceID = $ID}
+    Invoke-FreshDeskAPI -Resource tickets -Method Get -ResourceID $ID
 }
 
 function New-FreshDeskTicket {
@@ -105,7 +113,8 @@ function New-FreshDeskTicket {
         $product_id,
         $source,
         $tags,
-        $company_id
+        $company_id,
+        $parent_id
     )    
     Invoke-FreshDeskAPI -Body $PSBoundParameters -Resource tickets -Method Post
 }
