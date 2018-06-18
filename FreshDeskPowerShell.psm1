@@ -129,7 +129,21 @@ function Remove-FreshDeskTicket {
 }
 
 function Get-FreshDeskContact {
+    param (
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName)]$ID
+    )
+    process {
+        Invoke-FreshDeskAPI -Resource contacts -Method Get -ResourceID $ID
+    }
+}
 
+function Remove-FreshDeskContact {
+    param (
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName)]$ID
+    )
+    process {
+        Invoke-FreshDeskAPI -Resource contacts -Method Delete -ResourceID $ID
+    }
 }
 
 function New-FreshDeskContact {
