@@ -3,7 +3,6 @@ function Set-FreshDeskAPIKey {
         $APIKey
     )
     $Script:APIKey = $APIKey
-    #Set-FreshDeskCredential -Username $APIKey -Password "X"
     Set-FreshDeskCredential -Username $APIKey -Password $APIKey
 }
 
