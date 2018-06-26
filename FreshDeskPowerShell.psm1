@@ -127,6 +127,10 @@ function Remove-FreshDeskTicket {
     }
 }
 
+function Get-FreshDeskTicketField {
+    Invoke-FreshDeskAPI -Resource ticket_fields -Method Get
+}
+
 function Get-FreshDeskContact {
     param (
         [Parameter(Mandatory,ValueFromPipelineByPropertyName)]$ID
