@@ -73,10 +73,36 @@ function Invoke-FreshDeskAPI {
     $BodyParameter = @{
         Body = if ($Body) {$Body | ConvertFrom-PSBoundParameters | ConvertTo-Json}
     }
-
+    
+    $StopWatch = [Diagnostics.Stopwatch]::StartNew()
     Invoke-RestMethod -ContentType "application/json" -Uri $URL -Method $Method -UseBasicParsing -Headers @{ 
         Authorization = $Credential | ConvertTo-HttpBasicAuthorizationHeaderValue -Type Basic
     } @BodyParameter
+    $StopWatch.Stop()
+
+    New-APICallLog -URL $URL -Method $Method -Body $BodyParameter.Body -TimeSpan $StopWatch.Elapsed
+}
+
+function New-APICallLog {
+    param (
+        $URL,
+        $Method,
+        $Body,
+        $TimeSpan
+    )
+    if (-not $Script:APICallLog) {
+        $Script:APICallLog = New-Object System.Collections.ArrayList
+    }
+    
+    $Script:APICallLog.Add(($PSBoundParameters | ConvertFrom-PSBoundParameters)) | Out-Null
+}
+
+function Get-APICallLog {
+    $Script:APICallLog
+}
+
+function Get-FreshdeskAPIAverageExecutionTime {
+    Get-APICallLog | Select-Object -ExpandProperty TimeSpan | Measure-Object -Property TotalMilliseconds -Average
 }
 
 function Get-FreshDeskTicket {
