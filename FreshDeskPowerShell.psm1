@@ -68,12 +68,12 @@ function Invoke-FreshDeskAPI {
         $Body
     )
     $URL = Get-FreshDeskURL @PSBoundParameters
-    
+
     $Credential = Get-FreshDeskCredential
     $BodyParameter = @{
         Body = if ($Body) {$Body | ConvertFrom-PSBoundParameters | ConvertTo-Json}
     }
-    
+
     $StopWatch = [Diagnostics.Stopwatch]::StartNew()
     Invoke-RestMethod -ContentType "application/json" -Uri $URL -Method $Method -UseBasicParsing -Headers @{ 
         Authorization = $Credential | ConvertTo-HttpBasicAuthorizationHeaderValue -Type Basic
@@ -88,12 +88,13 @@ function New-APICallLog {
         $URL,
         $Method,
         $Body,
-        $TimeSpan
+        $TimeSpan,
+        $EventDateTime = (Get-Date)
     )
     if (-not $Script:APICallLog) {
         $Script:APICallLog = New-Object System.Collections.ArrayList
     }
-    
+
     $Script:APICallLog.Add(($PSBoundParameters | ConvertFrom-PSBoundParameters)) | Out-Null
 }
 
