@@ -145,6 +145,37 @@ function New-FreshDeskTicket {
     Invoke-FreshDeskAPI -Body $PSBoundParameters -Resource tickets -Method Post
 }
 
+function Set-FreshDeskTicket {
+    param (
+        $id,
+        $name,
+        $requester_id,
+        $email,
+        $facebook_id,
+        $phone,
+        $twitter_id,
+        $unique_external_id,
+        $subject,
+        $type,
+        $status,
+        $priority,
+        $description,
+        $responder_id,
+        $attachments,
+        $custom_fields,
+        $due_by,
+        $email_config_id,
+        $fr_due_by,
+        $group_id,
+        $product_id,
+        $source,
+        $tags,
+        $company_id
+    )
+    $PSBoundParameters.Remove("id") | Out-Null
+    Invoke-FreshDeskAPI -Body $PSBoundParameters -Resource tickets -Method Put -ResourceID $id
+}
+
 function Remove-FreshDeskTicket {
     param (
         [Parameter(Mandatory,ValueFromPipelineByPropertyName)]$ID
