@@ -10,6 +10,10 @@ function Get-FreshDeskAPIKey {
     $Script:APIKey
 }
 
+function Remove-FreshDeskAPIKey {
+    Remove-Variable -Scope 1 -Name APIKey
+}
+
 function Set-FreshDeskCredential {
     param (
         [Parameter(Mandatory,ParameterSetName="Username")]$Username,
@@ -31,6 +35,10 @@ function Get-FreshDeskCredential {
     }
 }
 
+function Remove-FreshDeskCredential {
+    Remove-Variable -Scope 1 -Name Credential
+}
+
 function Set-FreshDeskDomain {
     param (
         $Domain
@@ -40,6 +48,10 @@ function Set-FreshDeskDomain {
 
 function Get-FreshDeskDomain {
     $Script:Domain
+}
+
+function Remove-FreshDeskDomain {
+    Remove-Variable -Scope 1 -Name Domain
 }
 
 
