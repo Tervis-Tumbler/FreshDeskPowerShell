@@ -61,7 +61,7 @@ function Get-FreshDeskURL {
 
 function Invoke-FreshDeskAPI {
     param (
-        [ValidateSet("tickets","contacts","ticket_fields")]$Resource,
+        [ValidateSet("tickets","contacts","ticket_fields","settings","agents")]$Resource,
         $ResourceID,
         $Method,
         $Include,
@@ -187,6 +187,19 @@ function Remove-FreshDeskTicket {
 
 function Get-FreshDeskTicketField {
     Invoke-FreshDeskAPI -Resource ticket_fields -Method Get
+}
+
+function Get-FreshDeskSettingHelpDesk {
+    Invoke-FreshDeskAPI -Resource settings -Method Get -ResourceID helpdesk
+}
+
+function Get-FreshDeskAgent {
+    param (
+        [Switch]$Me
+    )
+    if ($Me) {
+        Invoke-FreshDeskAPI -Resource agents -Method Get -ResourceID me
+    }
 }
 
 function Get-FreshDeskContact {
