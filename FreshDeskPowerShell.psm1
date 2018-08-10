@@ -2,12 +2,7 @@ function Set-FreshDeskAPIKey {
     param (
         $APIKey
     )
-    $Script:APIKey = $APIKey
     Set-FreshDeskCredential -Username $APIKey -Password $APIKey
-}
-
-function Get-FreshDeskAPIKey {
-    $Script:APIKey
 }
 
 function Remove-FreshDeskAPIKey {
@@ -77,11 +72,15 @@ function Invoke-FreshDeskAPI {
         $ResourceID,
         $Method,
         $Include,
-        $Body
+        $Body,
+        $Credential
     )
     $URL = Get-FreshDeskURL @PSBoundParameters
 
-    $Credential = Get-FreshDeskCredential
+    if (-not $Credential) {
+        $Credential = Get-FreshDeskCredential
+    }
+    
     $BodyParameter = @{
         Body = if ($Body) {$Body | ConvertFrom-PSBoundParameters | ConvertTo-Json}
     }
@@ -120,10 +119,11 @@ function Get-FreshdeskAPIAverageExecutionTime {
 
 function Get-FreshDeskTicket {
     param (
-        $ID
+        $ID,
+        $Credential
     )
-    $Parameters = @{ResourceID = $ID}
-    Invoke-FreshDeskAPI -Resource tickets -Method Get -ResourceID $ID
+    $CredentialParameter = $PSBoundParameters | ConvertFrom-PSBoundParameters -Property Credential -AsHashTable
+    Invoke-FreshDeskAPI -Resource tickets -Method Get -ResourceID $ID @CredentialParameter
 }
 
 function New-FreshDeskTicket {
@@ -152,9 +152,12 @@ function New-FreshDeskTicket {
         $source,
         $tags,
         $company_id,
-        $parent_id
-    )    
-    Invoke-FreshDeskAPI -Body $PSBoundParameters -Resource tickets -Method Post
+        $parent_id,
+        $Credential
+    )
+    $CredentialParameter = $PSBoundParameters | ConvertFrom-PSBoundParameters -Property Credential -AsHashTable
+    $BodyParameters = $PSBoundParameters | ConvertFrom-PSBoundParameters -ExcludeProperty Credential -AsHashTable
+    Invoke-FreshDeskAPI -Body $BodyParameters -Resource tickets -Method Post @CredentialParameter
 }
 
 function Set-FreshDeskTicket {
@@ -182,53 +185,71 @@ function Set-FreshDeskTicket {
         $product_id,
         $source,
         $tags,
-        $company_id
+        $company_id,
+        $Credential
     )
-    $PSBoundParameters.Remove("id") | Out-Null
-    Invoke-FreshDeskAPI -Body $PSBoundParameters -Resource tickets -Method Put -ResourceID $id
+    $CredentialParameter = $PSBoundParameters | ConvertFrom-PSBoundParameters -Property Credential -AsHashTable
+    $BodyParameters = $PSBoundParameters | ConvertFrom-PSBoundParameters -ExcludeProperty Credential,id -AsHashTable
+    Invoke-FreshDeskAPI -Body $BodyParameters -Resource tickets -Method Put -ResourceID $id
 }
 
 function Remove-FreshDeskTicket {
     param (
-        [Parameter(Mandatory,ValueFromPipelineByPropertyName)]$ID
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName)]$ID,
+        $Credential
     )
     process {
-        Invoke-FreshDeskAPI -Resource tickets -Method Delete -ResourceID $ID
+        $CredentialParameter = $PSBoundParameters | ConvertFrom-PSBoundParameters -Property Credential -AsHashTable
+        Invoke-FreshDeskAPI -Resource tickets -Method Delete -ResourceID $ID @CredentialParameter
     }
 }
 
 function Get-FreshDeskTicketField {
-    Invoke-FreshDeskAPI -Resource ticket_fields -Method Get
+    param (
+        $Credential
+    )
+    $CredentialParameter = $PSBoundParameters | ConvertFrom-PSBoundParameters -Property Credential -AsHashTable
+    Invoke-FreshDeskAPI -Resource ticket_fields -Method Get @CredentialParameter
 }
 
 function Get-FreshDeskSettingHelpDesk {
-    Invoke-FreshDeskAPI -Resource settings -Method Get -ResourceID helpdesk
+    param (
+        $Credential
+    )
+    $CredentialParameter = $PSBoundParameters | ConvertFrom-PSBoundParameters -Property Credential -AsHashTable
+    Invoke-FreshDeskAPI -Resource settings -Method Get -ResourceID helpdesk @CredentialParameter
 }
 
 function Get-FreshDeskAgent {
     param (
-        [Switch]$Me
+        [Switch]$Me,
+        $Credential
     )
+    $CredentialParameter = $PSBoundParameters | ConvertFrom-PSBoundParameters -Property Credential -AsHashTable
     if ($Me) {
-        Invoke-FreshDeskAPI -Resource agents -Method Get -ResourceID me
+        Invoke-FreshDeskAPI -Resource agents -Method Get -ResourceID me @CredentialParameter
     }
 }
 
 function Get-FreshDeskContact {
     param (
-        [Parameter(Mandatory,ValueFromPipelineByPropertyName)]$ID
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName)]$ID,
+        $Credential
     )
     process {
-        Invoke-FreshDeskAPI -Resource contacts -Method Get -ResourceID $ID
+        $CredentialParameter = $PSBoundParameters | ConvertFrom-PSBoundParameters -Property Credential -AsHashTable
+        Invoke-FreshDeskAPI -Resource contacts -Method Get -ResourceID $ID @CredentialParameter
     }
 }
 
 function Remove-FreshDeskContact {
     param (
-        [Parameter(Mandatory,ValueFromPipelineByPropertyName)]$ID
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName)]$ID,
+        $Credential
     )
     process {
-        Invoke-FreshDeskAPI -Resource contacts -Method Delete -ResourceID $ID
+        $CredentialParameter = $PSBoundParameters | ConvertFrom-PSBoundParameters -Property Credential -AsHashTable
+        Invoke-FreshDeskAPI -Resource contacts -Method Delete -ResourceID $ID @CredentialParameter
     }
 }
 
@@ -255,7 +276,10 @@ function New-FreshDeskContact {
         [string]$twitter_id,
         [array]$other_companies,
         [datetime]$created_at,
-        [datetime]$updated_at
+        [datetime]$updated_at,
+        $Credential
     )
-    Invoke-FreshDeskAPI -Body $PSBoundParameters -Resource contacts -Method Post
+    $CredentialParameter = $PSBoundParameters | ConvertFrom-PSBoundParameters -Property Credential -AsHashTable
+    $BodyParameters = $PSBoundParameters | ConvertFrom-PSBoundParameters -ExcludeProperty Credential -AsHashTable
+    Invoke-FreshDeskAPI -Body $BodyParameters -Resource contacts -Method Post @CredentialParameter
 }
