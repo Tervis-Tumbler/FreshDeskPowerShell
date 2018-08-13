@@ -5,10 +5,6 @@ function Set-FreshDeskAPIKey {
     Set-FreshDeskCredential -Username $APIKey -Password $APIKey
 }
 
-function Remove-FreshDeskAPIKey {
-    Remove-Variable -Scope 1 -Name APIKey
-}
-
 function Set-FreshDeskCredential {
     param (
         [Parameter(Mandatory,ParameterSetName="Username")]$Username,
