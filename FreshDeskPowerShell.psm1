@@ -184,7 +184,8 @@ function Set-FreshDeskTicket {
         $tags,
         $company_id
     )
-    Invoke-FreshDeskAPI -Body $PSBoundParameters -Resource tickets -Method Put -ResourceID $id
+    $BodyParameters = $PSBoundParameters | ConvertFrom-PSBoundParameters -ExcludeProperty ID -AsHashTable
+    Invoke-FreshDeskAPI -Body $BodyParameters -Resource tickets -Method Put -ResourceID $id
 }
 
 function Remove-FreshDeskTicket {
