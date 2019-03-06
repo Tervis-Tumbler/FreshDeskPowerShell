@@ -31,7 +31,7 @@ function Get-FreshDeskCredential {
     } elseif ($Script:CredentialScriptBlock) {
         Invoke-Command -ScriptBlock $Script:CredentialScriptBlock
     } else {
-        Throw "You need to call either Set-FreshDeskAPIKey or Set-FreshDeskCredential with your freshdesk crednetials"
+        Throw "You need to call either Set-FreshDeskAPIKey or Set-FreshDeskCredential with your freshdesk credentials"
     }
 }
 
