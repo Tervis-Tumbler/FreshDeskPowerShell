@@ -61,14 +61,20 @@ function Get-FreshDeskURL {
         $ResourceID,
         $Include,
         $Page,
-        $Per_Page
+        $Per_Page,
+        $Query
     )
     $Domain = Get-FreshDeskDomain
     $PSBoundParameters.Remove("Resource") | Out-Null
     $PSBoundParameters.Remove("ResourceID") | Out-Null
+    $PSBoundParameters.Remove("Query") | Out-Null
     $QueryStringParameters = $PSBoundParameters | ConvertTo-URLEncodedQueryStringParameterString
+    $QueryQuoted = "`"$("$Query")`""
 
-    "https://$Domain.freshdesk.com/api/v2/$Resource$(if($ResourceID){"/$ResourceID"})$(if($QueryStringParameters){"?$QueryStringParameters"})"
+    "https://$Domain.freshdesk.com/api/v2/$(if($Query){"search/"})$Resource$(if($ResourceID){"/$ResourceID"})$(if($QueryStringParameters){"?$QueryStringParameters"})$(
+        if ($Query -and $QueryStringParameters) { "query=$QueryQuoted" }
+        elseif ($Query) { "?query=$QueryQuoted"}
+    )"
 }
 
 function Invoke-FreshDeskAPI {
@@ -77,7 +83,8 @@ function Invoke-FreshDeskAPI {
         $ResourceID,
         $Method,
         $Include,
-        $Body
+        $Body,
+        $Query
     )
     $URL = Get-FreshDeskURL @PSBoundParameters
 
