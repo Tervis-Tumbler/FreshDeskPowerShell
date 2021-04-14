@@ -91,7 +91,7 @@ function Invoke-FreshDeskAPI {
     $Credential = Get-FreshDeskCredential
     
     $BodyParameter = @{
-        Body = if ($Body) {$Body | ConvertFrom-PSBoundParameters | ConvertTo-Json}
+        Body = if ($Body) { ConvertTo-Json $($Body | ConvertFrom-PSBoundParameters) }
     }
 
     $StopWatch = [Diagnostics.Stopwatch]::StartNew()
